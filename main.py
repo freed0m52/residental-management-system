@@ -1,109 +1,230 @@
-import datetime
+"""
+Система управления жилым комплексом.
+Главный модуль — точка входа в приложение.
+"""
 
-def get_apartment_status(status_choice):
-    if status_choice == "1":
-        return "Собственник"
-    elif status_choice == "2":
-        return "Арендатор"
-    else:
-        print("Некорректный выбор статуса. Установлено значение 'Неизвестно'.")
-        return "Неизвестно"
+import os
+from typing import List, Dict, Any
 
-def get_request_type(request_choice):
-    if request_choice == "1":
-        return "Ремонт"
-    elif request_choice == "2":
-        return "Уборка"
-    elif request_choice == "3":
-        return "Сантехника"
-    else:
-        print("Выбран неизвестный тип заявки. Установлено 'Другое'.")
-        return "Другое"
+from utils import input_int
+from storage import load_data, save_data
+from residents import (
+    add_resident,
+    find_resident_by_name,
+    find_resident_by_apartment,
+    sort_residents_by_name
+)
+from requests import (
+    create_request,
+    find_requests_by_apartment,
+    find_requests_by_status,
+    get_requests_summary,
+    REQUEST_TYPES
+)
 
-def get_request_status(urgency_choice):
-    if urgency_choice == "2":
-        print("Заявка помечена как срочная!")
-        return "Срочная (в обработке)"
-    else:
-        return "Новая"
-
-def generate_request_number(apartment_number):
-    current_date = datetime.datetime.now()
-    return current_date.strftime("%Y%m%d") + str(apartment_number)
-
-def get_department(request_type, request_status):
-    if request_status == "Срочная (в обработке)":
-        return "Старший мастер"
-    elif request_type in ("Сантехника", "Ремонт"):
-        return "Отдел технического обслуживания"
-    else:
-        return "Общий отдел"
+# Пути к файлам данных
+DATA_DIR = "data"
+RESIDENTS_FILE = os.path.join(DATA_DIR, "residents.json")
+REQUESTS_FILE = os.path.join(DATA_DIR, "requests.json")
 
 
-def print_resident_info(full_name, apartment_number, phone, status):
-    print(f"\nЖитель {full_name} успешно зарегистрирован!")
-    print(f"   Квартира: {apartment_number}")
-    print(f"   Телефон: {phone}")
-    print(f"   Статус: {status}")
+def load_all_data() -> tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Загрузить все данные из JSON-файлов."""
+    residents = load_data(RESIDENTS_FILE)
+    requests = load_data(REQUESTS_FILE)
+    return residents, requests
 
-def print_request_info(request_number, full_name, request_type, description, request_status):
-    print("\nСоздана новая заявка")
-    print(f"Номер заявки: {request_number}")
-    print(f"Житель: {full_name}")
-    print(f"Тип: {request_type}")
-    print(f"Описание: {description}")
-    print(f"Статус: {request_status}")
-    print(f"Дата: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M')}")
 
-def print_department_info(department):
-    if department == "Старший мастер":
-        print(f"\nСрочная заявка направлена {department}.")
-    elif department == "Отдел технического обслуживания":
-        print(f"\nЗаявка направлена в {department}.")
-    else:
-        print(f"\nЗаявка направлена в {department}.")
+def save_all_data(residents: List[Dict[str, Any]], requests: List[Dict[str, Any]]) -> None:
+    """Сохранить все данные в JSON-файлы."""
+    save_data(RESIDENTS_FILE, residents)
+    save_data(REQUESTS_FILE, requests)
 
-def print_summary(is_registered, request_number):
-    print("\nИТОГО")
-    registration_status = "Успешно" if not is_registered else "Пропущена"
-    print(f"Регистрация: {registration_status}")
-    print(f"Заявка №{request_number} создана")
 
-def main():
-    
-    print("Регистрация нового жителя")
-    
-    full_name = input("Введите ФИО жителя: ")
-    apartment_number = int(input("Введите номер квартиры: "))
-    phone = input("Введите контактный телефон: ")
-    
-    status_choice = input("Статус проживания (1 - собственник, 2 - арендатор): ")
-    status = get_apartment_status(status_choice)
-    
-    is_registered = False
-    
-    if is_registered:
-        print(f"\nЖитель {full_name} уже зарегистрирован в системе.")
-    else:
-        print_resident_info(full_name, apartment_number, phone, status)
-    
-    print("\nПодача заявки на обслуживание")
-    request_choice = input("Выберите тип заявки (1 - ремонт, 2 - уборка, 3 - сантехника): ")
-    request_type = get_request_type(request_choice)
-    
-    description = input("Краткое описание проблемы: ")
-    
-    urgency_choice = input("Срочность заявки (1 - обычная, 2 - срочная): ")
-    request_status = get_request_status(urgency_choice)
-    
-    request_number = generate_request_number(apartment_number)
-    
-    print_request_info(request_number, full_name, request_type, description, request_status)
-    
-    department = get_department(request_type, request_status)
-    print_department_info(department)
-    
-    print_summary(is_registered, request_number)
+def show_residents(residents: List[Dict[str, Any]]) -> None:
+    """Вывести список всех жителей."""
+    if not residents:
+        print("\n📋 Список жителей пуст.")
+        return
+
+    print("\n" + "=" * 60)
+    print("📋 СПИСОК ЖИТЕЛЕЙ")
+    print("=" * 60)
+
+    sorted_residents = sort_residents_by_name(residents)
+
+    for r in sorted_residents:
+        print(f"ID: {r['id']}")
+        print(f"  ФИО: {r['full_name']}")
+        print(f"  Квартира: {r['apartment_number']}")
+        print(f"  Телефон: {r['phone']}")
+        print(f"  Статус: {r['status']}")
+        print("-" * 40)
+
+
+def show_requests(requests: List[Dict[str, Any]]) -> None:
+    """Вывести список всех заявок."""
+    if not requests:
+        print("\n📋 Список заявок пуст.")
+        return
+
+    print("\n" + "=" * 60)
+    print("📋 СПИСОК ЗАЯВОК")
+    print("=" * 60)
+
+    for r in requests:
+        urgent = "⚠️ СРОЧНО" if r.get("is_urgent", False) else ""
+        print(f"ID: {r['id']} {urgent}")
+        print(f"  Квартира: {r['apartment_number']}")
+        print(f"  Тип: {r['type']}")
+        print(f"  Описание: {r['description']}")
+        print(f"  Статус: {r['status']}")
+        print(f"  Отдел: {r['department']}")
+        print(f"  Дата: {r['created_at']}")
+        print("-" * 40)
+
+
+def show_statistics(requests: List[Dict[str, Any]]) -> None:
+    """Вывести статистику по заявкам."""
+    stats = get_requests_summary(requests)
+
+    print("\n" + "=" * 60)
+    print("📊 СТАТИСТИКА ЗАЯВОК")
+    print("=" * 60)
+    print(f"Всего заявок: {stats['Всего']}")
+    print(f"Новые: {stats['Новые']}")
+    print(f"Срочные: {stats['Срочные']}")
+    print(f"Выполненные: {stats['Выполненные']}")
+
+
+def main() -> None:
+    """Главная функция приложения."""
+    print("\n" + "=" * 60)
+    print("🏢 СИСТЕМА УПРАВЛЕНИЯ ЖИЛЫМ КОМПЛЕКСОМ")
+    print("=" * 60)
+
+    # Загрузка данных
+    residents, requests = load_all_data()
+    print(f"✅ Загружено жителей: {len(residents)}")
+    print(f"✅ Загружено заявок: {len(requests)}")
+
+    while True:
+        print("\n" + "-" * 40)
+        print("МЕНЮ:")
+        print("  1. Показать всех жителей")
+        print("  2. Добавить жителя")
+        print("  3. Найти жителя по квартире")
+        print("  4. Найти жителя по ФИО")
+        print("  5. Показать все заявки")
+        print("  6. Создать заявку")
+        print("  7. Найти заявки по квартире")
+        print("  8. Найти заявки по статусу")
+        print("  9. Показать статистику")
+        print("  0. Выход")
+        print("-" * 40)
+
+        choice = input_int("Выберите действие: ")
+
+        if choice == 0:
+            print("💾 Сохраняем данные...")
+            save_all_data(residents, requests)
+            print("👋 До свидания!")
+            break
+
+        elif choice == 1:
+            show_residents(residents)
+
+        elif choice == 2:
+            print("\n➕ ДОБАВЛЕНИЕ ЖИТЕЛЯ")
+            full_name = input("  ФИО: ").strip()
+            apartment = input_int("  Номер квартиры: ")
+            phone = input("  Телефон: ").strip()
+            status_choice = input("  Статус (1 - Собственник, 2 - Арендатор): ").strip()
+            status = "Собственник" if status_choice == "1" else "Арендатор"
+
+            resident = add_resident(residents, full_name, apartment, phone, status)
+            print(f"✅ Житель добавлен! ID: {resident['id']}")
+
+        elif choice == 3:
+            apartment = input_int("Введите номер квартиры: ")
+            resident = find_resident_by_apartment(residents, apartment)
+            if resident:
+                print(f"\n✅ Найден: {resident['full_name']}")
+                print(f"   Телефон: {resident['phone']}")
+                print(f"   Статус: {resident['status']}")
+            else:
+                print(f"❌ Житель в квартире {apartment} не найден.")
+
+        elif choice == 4:
+            query = input("Введите ФИО или часть ФИО: ").strip()
+            found = find_resident_by_name(residents, query)
+            if found:
+                print(f"\n✅ Найдено {len(found)} жителей:")
+                for r in found:
+                    print(f"  - {r['full_name']} (кв. {r['apartment_number']})")
+            else:
+                print("❌ Ничего не найдено.")
+
+        elif choice == 5:
+            show_requests(requests)
+
+        elif choice == 6:
+            print("\n➕ СОЗДАНИЕ ЗАЯВКИ")
+            apartment = input_int("  Номер квартиры: ")
+
+            resident = find_resident_by_apartment(residents, apartment)
+            if not resident:
+                print("❌ Житель с такой квартирой не найден. Сначала зарегистрируйте жителя.")
+                continue
+
+            print("  Тип заявки:")
+            for key, value in REQUEST_TYPES.items():
+                print(f"    {key}. {value}")
+            type_choice = input("  Выберите тип (1-3): ").strip()
+            request_type = REQUEST_TYPES.get(type_choice, "Другое")
+
+            description = input("  Описание проблемы: ").strip()
+            urgent_choice = input("  Срочная? (1 - да, 2 - нет): ").strip()
+            is_urgent = urgent_choice == "1"
+
+            request = create_request(
+                requests,
+                resident["id"],
+                apartment,
+                request_type,
+                description,
+                is_urgent
+            )
+            print(f"✅ Заявка создана! ID: {request['id']}")
+            print(f"   Отдел: {request['department']}")
+
+        elif choice == 7:
+            apartment = input_int("Введите номер квартиры: ")
+            found = find_requests_by_apartment(requests, apartment)
+            if found:
+                print(f"\n✅ Найдено {len(found)} заявок:")
+                for r in found:
+                    urgent = "⚠️ " if r.get("is_urgent", False) else ""
+                    print(f"  {urgent}ID {r['id']}: {r['type']} - {r['status']}")
+            else:
+                print(f"❌ Заявок для квартиры {apartment} не найдено.")
+
+        elif choice == 8:
+            status = input("Введите статус (Новая/Выполнена): ").strip()
+            found = find_requests_by_status(requests, status)
+            if found:
+                print(f"\n✅ Найдено {len(found)} заявок со статусом '{status}':")
+                for r in found:
+                    print(f"  - ID {r['id']}: кв. {r['apartment_number']}, {r['type']}")
+            else:
+                print(f"❌ Заявок со статусом '{status}' не найдено.")
+
+        elif choice == 9:
+            show_statistics(requests)
+
+        else:
+            print("❌ Неверный выбор. Попробуйте снова.")
+
 
 if __name__ == "__main__":
     main()
