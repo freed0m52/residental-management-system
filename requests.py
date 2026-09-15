@@ -1,12 +1,7 @@
-"""
-Модуль для работы с заявками на обслуживание.
-"""
-
 from datetime import datetime
 from typing import Dict, List
 
 from utils import generate_id
-
 
 REQUEST_TYPES = {
     "1": "Ремонт",
@@ -31,17 +26,6 @@ def create_request(
 ) -> Dict[str, any]:
     """
     Создать новую заявку на обслуживание.
-
-    Args:
-        requests: Список всех заявок
-        resident_id: ID жителя
-        apartment_number: Номер квартиры
-        request_type: Тип заявки
-        description: Описание проблемы
-        is_urgent: Флаг срочности
-
-    Returns:
-        Словарь с данными созданной заявки
     """
     current_date = datetime.now()
 
@@ -63,13 +47,6 @@ def create_request(
 def get_department(request_type: str, is_urgent: bool) -> str:
     """
     Определить ответственный отдел.
-
-    Args:
-        request_type: Тип заявки
-        is_urgent: Флаг срочности
-
-    Returns:
-        Название отдела
     """
     if is_urgent:
         return "Старший мастер"
@@ -82,13 +59,6 @@ def find_requests_by_apartment(
 ) -> List[Dict[str, any]]:
     """
     Найти все заявки по номеру квартиры.
-
-    Args:
-        requests: Список всех заявок
-        apartment_number: Номер квартиры
-
-    Returns:
-        Список заявок
     """
     return [
         r for r in requests
@@ -102,13 +72,6 @@ def find_requests_by_status(
 ) -> List[Dict[str, any]]:
     """
     Найти заявки по статусу.
-
-    Args:
-        requests: Список всех заявок
-        status: Статус заявки
-
-    Returns:
-        Список заявок
     """
     return [
         r for r in requests
@@ -123,14 +86,6 @@ def update_request_status(
 ) -> bool:
     """
     Обновить статус заявки.
-
-    Args:
-        requests: Список всех заявок
-        request_id: ID заявки
-        new_status: Новый статус
-
-    Returns:
-        True если обновлено, False если заявка не найдена
     """
     for request in requests:
         if request["id"] == request_id:
@@ -142,12 +97,6 @@ def update_request_status(
 def get_request_status_text(is_available: bool) -> str:
     """
     Вернуть текстовый статус (функция из ПР1).
-
-    Args:
-        is_available: Доступность
-
-    Returns:
-        Текстовый статус
     """
     if is_available:
         return "Помещение доступно для бронирования"
@@ -157,12 +106,6 @@ def get_request_status_text(is_available: bool) -> str:
 def get_requests_summary(requests: List[Dict[str, any]]) -> Dict[str, int]:
     """
     Получить статистику по заявкам.
-
-    Args:
-        requests: Список всех заявок
-
-    Returns:
-        Словарь со статистикой
     """
     summary = {
         "Всего": len(requests),
