@@ -36,4 +36,4 @@ def test_requests_summary():
     stats = get_requests_summary(requests_list)
     assert stats["Всего"] == 3
     assert stats["Срочные"] == 1
-    assert stats["Новые"] == 2  # ← ИСПРАВЛЕНО: было 3, стало 2
+    assert stats["Новые"] == 2
