@@ -9,5 +9,16 @@
     "status": "Срочная",
     "created_at": "08.09.2026 16:44",
     "department": "Старший мастер"
+  },
+  {
+    "id": 82876,
+    "resident_id": 56002,
+    "apartment_number": 67,
+    "type": "Уборка",
+    "description": "Уборка гостинной комнаты",
+    "is_urgent": false,
+    "status": "Новая",
+    "created_at": "21.09.2026 20:51",
+    "department": "Общий отдел"
   }
 ]
