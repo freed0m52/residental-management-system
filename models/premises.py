@@ -6,16 +6,6 @@ from typing import Any, Dict, List, Optional
 
 
 class Premise:
-    """
-    Помещение в жилом комплексе.
-
-    Атрибуты:
-        id: уникальный идентификатор
-        number: номер помещения (квартиры)
-        premise_type: тип (жилое/коммерческое)
-        area: площадь в кв.м.
-        is_occupied: занято ли помещение
-    """
 
     def __init__(
         self,

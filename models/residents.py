@@ -6,16 +6,6 @@ from typing import Any, Dict, List, Optional
 
 
 class Resident:
-    """
-    Житель жилого комплекса.
-
-    Атрибуты:
-        id: уникальный идентификатор
-        full_name: ФИО жителя
-        apartment_number: номер квартиры
-        phone: контактный телефон
-        status: статус проживания (Собственник/Арендатор)
-    """
 
     def __init__(
         self,
