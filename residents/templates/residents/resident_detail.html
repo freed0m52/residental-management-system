@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{ resident.full_name }} - Жилой комплекс{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h2 class="card-title">{{ resident.full_name }}</h2>
+        <p class="card-text"><strong>ID:</strong> {{ resident.id }}</p>
+        <p class="card-text"><strong>Квартира:</strong> {{ resident.apartment_number }}</p>
+        <p class="card-text"><strong>Телефон:</strong> {{ resident.phone }}</p>
+        <p class="card-text"><strong>Статус:</strong> {{ resident.status }}</p>
+        <a href="{% url 'residents:list' %}" class="btn btn-outline-secondary">← Назад к списку</a>
+    </div>
+</div>
+{% endblock %}

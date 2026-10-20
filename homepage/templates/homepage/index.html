@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Жилой комплекс{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Система управления жилым комплексом</h1>
+<p class="lead">
+    Учёт жителей, помещений и заявок на обслуживание.
+</p>
+<hr>
+<p>Основные разделы:</p>
+<a href="{% url 'residents:list' %}" class="btn btn-primary me-2">Жители</a>
+<a href="{% url 'premises:list' %}" class="btn btn-secondary">Помещения</a>
+{% endblock %}

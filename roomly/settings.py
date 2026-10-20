@@ -23,9 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-#0tc-!4i&kha_nfh_rppl&i1nn2o_p_5=ggl&=aepw)02s7m=g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# ВКЛЮЧАЕМ DEBUG для разработки. 
+# Чтобы проверить свою страницу 404, временно поставь False (и перезапусти сервер).
+DEBUG = False
 
-ALLOWED_HOSTS = []
+# Если DEBUG = False, сюда нужно добавить localhost и 127.0.0.1
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -57,7 +60,7 @@ ROOT_URLCONF = 'roomly.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # <--- ИЗМЕНИТЬ ВОТ ТАК
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -106,9 +109,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 LANGUAGE_CODE = "ru-RU"
 TIME_ZONE = "Europe/Moscow"
-USE_TZ = True
-
 USE_I18N = True
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)

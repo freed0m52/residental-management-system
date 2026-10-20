@@ -7,5 +7,3 @@ urlpatterns = [
     path("residents/", include("residents.urls")),
     path("premises/", include("premises.urls")),
 ]
-
-handler404 = "homepage.views.page_not_found"

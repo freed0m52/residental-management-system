@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Помещения - Жилой комплекс{% endblock %}
+
+{% block content %}
+<h1>Помещения</h1>
+<p class="text-muted">Всего: {{ premises|length }}</p>
+
+<ul class="list-group">
+    {% for p in premises %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a href="{% url 'premises:detail' p.id %}">
+                Помещение №{{ p.number }} ({{ p.premise_type }})
+            </a>
+            {% if p.is_occupied %}
+                <span class="badge bg-danger">занято</span>
+            {% else %}
+                <span class="badge bg-success">свободно</span>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li class="list-group-item">Список помещений пуст.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

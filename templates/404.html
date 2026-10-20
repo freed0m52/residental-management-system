@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Страница не найдена - Жилой комплекс{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h1 class="display-1 text-danger">404</h1>
+    <h2 class="mb-4">Страница не найдена</h2>
+    <p class="lead">Запрашиваемая страница или объект не существует.</p>
+    <a href="{% url 'homepage:index' %}" class="btn btn-primary mt-3">На главную</a>
+</div>
+{% endblock %}

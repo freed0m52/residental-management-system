@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Помещение №{{ premise.number }} - Жилой комплекс{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h2 class="card-title">Помещение №{{ premise.number }}</h2>
+        <p class="card-text"><strong>ID:</strong> {{ premise.id }}</p>
+        <p class="card-text"><strong>Тип:</strong> {{ premise.premise_type }}</p>
+        <p class="card-text"><strong>Площадь:</strong> {{ premise.area }} кв.м.</p>
+        <p class="card-text">
+            <strong>Статус:</strong>
+            {% if premise.is_occupied %}
+                <span class="badge bg-danger">занято</span>
+            {% else %}
+                <span class="badge bg-success">свободно</span>
+            {% endif %}
+        </p>
+        <a href="{% url 'premises:list' %}" class="btn btn-outline-secondary">← Назад к списку</a>
+    </div>
+</div>
+{% endblock %}
