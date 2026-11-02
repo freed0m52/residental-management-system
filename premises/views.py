@@ -1,17 +1,30 @@
 from django.shortcuts import render
-from storage import load_premises
+
+from db.database import get_connection
+
 
 def premises(request):
-    premises_list = load_premises("data/premises.json")
-    context = {"premises": premises_list}
-    return render(request, "premises/premise_list.html", context)
+    conn = get_connection()
+    premises_list = conn.execute(
+        "SELECT * FROM premises ORDER BY number"
+    ).fetchall()
+    conn.close()
+
+    return render(
+        request, "premises/premise_list.html", {"premises": premises_list}
+    )
+
 
 def premise_detail(request, premise_id: int):
-    premises_list = load_premises("data/premises.json")
-    premise = next((p for p in premises_list if p.id == premise_id), None)
-    
+    conn = get_connection()
+    premise = conn.execute(
+        "SELECT * FROM premises WHERE id = ?", [premise_id]
+    ).fetchone()
+    conn.close()
+
     if premise is None:
         return render(request, "404.html", status=404)
-        
-    context = {"premise": premise}
-    return render(request, "premises/premise_detail.html", context)
+
+    return render(
+        request, "premises/premise_detail.html", {"premise": premise}
+    )
