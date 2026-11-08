@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-#0tc-!4i&kha_nfh_rppl&i1nn2o_p_5=ggl&=aepw)02s7m=g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# ВКЛЮЧАЕМ DEBUG для разработки. 
+# ВКЛЮЧАЕМ DEBUG для разработки.
 # Чтобы проверить свою страницу 404, временно поставь False (и перезапусти сервер).
 DEBUG = True
 
@@ -42,10 +42,12 @@ INSTALLED_APPS = [
     "homepage",
     "residents",
     "premises",
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -66,6 +68,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "premises.context_processors.premise_context",
             ],
         },
     },
@@ -121,3 +124,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+INTERNAL_IPS = ["127.0.0.1"]

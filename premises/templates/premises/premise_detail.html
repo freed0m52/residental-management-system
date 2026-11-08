@@ -1,23 +1,25 @@
 {% extends "base.html" %}
-
-{% block title %}Помещение №{{ premise.number }} - Жилой комплекс{% endblock %}
-
+{% block title %}Помещение №{{ premise.number }} - {{ site_name }}{% endblock %}
 {% block content %}
 <div class="card">
     <div class="card-body">
         <h2 class="card-title">Помещение №{{ premise.number }}</h2>
-        <p class="card-text"><strong>ID:</strong> {{ premise.id }}</p>
         <p class="card-text"><strong>Тип:</strong> {{ premise.premise_type }}</p>
         <p class="card-text"><strong>Площадь:</strong> {{ premise.area }} кв.м.</p>
-        <p class="card-text">
-            <strong>Статус:</strong>
-            {% if premise.is_occupied %}
-                <span class="badge bg-danger">занято</span>
-            {% else %}
-                <span class="badge bg-success">свободно</span>
-            {% endif %}
-        </p>
-        <a href="{% url 'premises:list' %}" class="btn btn-outline-secondary">← Назад к списку</a>
+        <p class="card-text"><strong>Slug:</strong> {{ premise.slug }}</p>
+        {% if premise.is_large %}
+            <p class="text-success"><strong>Это большое помещение</strong></p>
+        {% endif %}
+        
+        <h4 class="mt-4">Заявки по этому помещению:</h4>
+        <ul>
+            {% for req in premise.requests.all %}
+                <li>{{ req.get_status_display }} - {{ req.request_type }} ({{ req.resident.full_name }})</li>
+            {% empty %}
+                <li>Заявок нет.</li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'premises:list' %}" class="btn btn-outline-secondary mt-3">← Назад к списку</a>
     </div>
 </div>
 {% endblock %}

@@ -1,21 +1,14 @@
 {% extends "base.html" %}
-
-{% block title %}Помещения - Жилой комплекс{% endblock %}
-
+{% block title %}Помещения - {{ site_name }}{% endblock %}
 {% block content %}
 <h1>Помещения</h1>
-<p class="text-muted">Всего: {{ premises|length }}</p>
-
 <ul class="list-group">
     {% for p in premises %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a href="{% url 'premises:detail' p.id %}">
-                Помещение №{{ p.number }} ({{ p.premise_type }})
-            </a>
-            {% if p.is_occupied %}
-                <span class="badge bg-danger">занято</span>
-            {% else %}
-                <span class="badge bg-success">свободно</span>
+            <!-- Ссылка через get_absolute_url -->
+            <a href="{{ p.get_absolute_url }}">Помещение №{{ p.number }} ({{ p.premise_type }})</a>
+            {% if p.is_large %}
+                <span class="badge bg-warning text-dark">Большое</span>
             {% endif %}
         </li>
     {% empty %}

@@ -13,9 +13,9 @@ SOURCE_DB = BASE_DIR / "data" / "residents.sqlite"
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "roomly.settings")
 django.setup()
 
-# Импорт моделей
-from residents.models import Resident
-from premises.models import Premise
+# Импорт моделей (теперь после django.setup, это нормально, просто добавляем noqa)
+from residents.models import Resident  # noqa: E402
+from premises.models import Premise  # noqa: E402
 
 
 def main():
@@ -48,7 +48,6 @@ def main():
                     "number": row["number"],
                     "premise_type": row["premise_type"],
                     "area": row["area"],
-                    "is_occupied": bool(row["is_occupied"]),
                 }
             )
 
