@@ -12,10 +12,10 @@
         <input type="text" name="q" class="form-control" placeholder="Поиск по номеру..." value="{{ search_query }}">
     </div>
     <div class="col-md-3">
-        <select name="type" class="form-select" onchange="this.form.submit()">
+        <select name="type" class="form-select" onchange="this.form.submit()"> <!---автоотправка формы-->>
             <option value="">Все типы</option>
             {% for t in types %}
-                <option value="{{ t }}" {% if type_filter == t %}selected{% endif %}>{{ t }}</option>
+                <option value="{{ t }}" {% if type_filter == t %}selected{% endif %}>{{ t }}</option> <!--- сохранение после обновы-->
             {% endfor %}
         </select>
     </div>

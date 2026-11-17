@@ -43,20 +43,19 @@ def resident_create(request):
 
 
 def request_list(request):
-    # Базовый QuerySet
     requests_list = Request.objects.all().select_related('resident', 'premise')
     
-    # 1. Фильтрация по статусу
+    # фильтрация по статусу
     status_filter = request.GET.get('status', '')
     if status_filter:
         requests_list = requests_list.filter(status=status_filter)
         
-    # 2. Сортировка
+    # сортировка
     sort = request.GET.get('sort', '-created_at') # по умолчанию новые сверху
     if sort in ['created_at', '-created_at', 'request_type']:
         requests_list = requests_list.order_by(sort)
 
-    # 3. Пагинация
+    # пагинация
     paginator = Paginator(requests_list, 5)
     page_obj = paginator.get_page(request.GET.get('page'))
 
@@ -70,13 +69,11 @@ def request_list(request):
     return render(request, 'residents/request_list.html', context)
 
 def statistics(request):
-    # Агрегация (Пункт 17 из ПР9)
     total_requests = Request.objects.count()
     new_requests = Request.objects.filter(status=Request.Status.NEW).count()
     in_progress = Request.objects.filter(status=Request.Status.IN_PROGRESS).count()
     completed = Request.objects.filter(status=Request.Status.COMPLETED).count()
     
-    # Группировка (Пункт 18 из ПР9) - сколько заявок у каждого помещения
     premise_stats = Premise.objects.annotate(req_count=Count('requests')).order_by('-req_count')
 
     context = {
@@ -88,7 +85,6 @@ def statistics(request):
     }
     return render(request, 'residents/statistics.html', context)
 
-# Создание заявки через сайт
 def request_create(request):
     if request.method == 'POST':
         form = RequestForm(request.POST)
@@ -99,13 +95,4 @@ def request_create(request):
         form = RequestForm()
     return render(request, 'residents/request_form.html', {'form': form})
 
-# Создание помещения через сайт (в приложении premises)
-def premise_create(request):
-    if request.method == 'POST':
-        form = PremiseForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('premises:list')
-    else:
-        form = PremiseForm()
-    return render(request, 'premises/premise_form.html', {'form': form})
+
