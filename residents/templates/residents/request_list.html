@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Заявки - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Заявки</h2>
+    <a href="{% url 'residents:request_create' %}" class="btn btn-success">+ Создать заявку</a>
+</div>
+
+<!-- Фильтры и Сортировка -->
+<form method="get" class="row mb-4 bg-light p-3 rounded">
+    <div class="col-md-4">
+        <label>Статус:</label>
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">Все статусы</option>
+            {% for code, name in statuses %}
+                <option value="{{ code }}" {% if status_filter == code %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label>Сортировка:</label>
+        <select name="sort" class="form-select" onchange="this.form.submit()">
+            <option value="-created_at" {% if sort == '-created_at' %}selected{% endif %}>Сначала новые</option>
+            <option value="created_at" {% if sort == 'created_at' %}selected{% endif %}>Сначала старые</option>
+            <option value="request_type" {% if sort == 'request_type' %}selected{% endif %}>По типу</option>
+        </select>
+    </div>
+</form>
+
+<!-- Список заявок -->
+<ul class="list-group mb-3">
+    {% for req in requests %}
+    <li class="list-group-item">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ req.request_type }} ({{ req.get_status_display }})</h5>
+            <small>{{ req.created_at|date:"d.m.Y H:i" }}</small>
+        </div>
+        <p class="mb-1">{{ req.description|default:"Без описания" }}</p>
+        <small>Житель: {{ req.resident.full_name }} | Помещение: №{{ req.premise.number }}</small>
+    </li>
+    {% empty %}
+    <li class="list-group-item">Заявок не найдено.</li>
+    {% endfor %}
+</ul>
+
+<!-- Пагинация -->
+{% if page_obj.has_other_pages %}
+<nav>
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&status={{ status_filter }}&sort={{ sort }}">Назад</a></li>
+        {% endif %}
+        <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+        {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&status={{ status_filter }}&sort={{ sort }}">Вперед</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

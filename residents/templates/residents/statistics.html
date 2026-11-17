@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Статистика - {{ site_name }}{% endblock %}
+
+{% block content %}
+<h2>Статистика заявок</h2>
+<div class="row mb-4">
+    <div class="col-md-3"><div class="card p-3 bg-light"><h4>Всего</h4><h2>{{ total_requests }}</h2></div></div>
+    <div class="col-md-3"><div class="card p-3 bg-info text-white"><h4>Новые</h4><h2>{{ new_requests }}</h2></div></div>
+    <div class="col-md-3"><div class="card p-3 bg-warning text-dark"><h4>В работе</h4><h2>{{ in_progress }}</h2></div></div>
+    <div class="col-md-3"><div class="card p-3 bg-success text-white"><h4>Выполнены</h4><h2>{{ completed }}</h2></div></div>
+</div>
+
+<h3>Заявки по помещениям (Группировка)</h3>
+<ul class="list-group">
+    {% for p in premise_stats %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        Помещение №{{ p.number }}
+        <span class="badge bg-primary rounded-pill">{{ p.req_count }}</span>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

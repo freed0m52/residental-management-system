@@ -1,18 +1,48 @@
 {% extends "base.html" %}
 {% block title %}Помещения - {{ site_name }}{% endblock %}
+
 {% block content %}
-<h1>Помещения</h1>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Помещения</h2>
+    <a href="{% url 'premises:create' %}" class="btn btn-success">+ Добавить помещение</a>
+</div>
+
+<form method="get" class="row bg-light p-3 rounded mb-4">
+    <div class="col-md-3">
+        <input type="text" name="q" class="form-control" placeholder="Поиск по номеру..." value="{{ search_query }}">
+    </div>
+    <div class="col-md-3">
+        <select name="type" class="form-select" onchange="this.form.submit()">
+            <option value="">Все типы</option>
+            {% for t in types %}
+                <option value="{{ t }}" {% if type_filter == t %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="sort" class="form-select" onchange="this.form.submit()">
+            <option value="number" {% if sort == 'number' %}selected{% endif %}>По номеру (возр.)</option>
+            <option value="-number" {% if sort == '-number' %}selected{% endif %}>По номеру (убыв.)</option>
+            <option value="area" {% if sort == 'area' %}selected{% endif %}>По площади (возр.)</option>
+            <option value="-area" {% if sort == '-area' %}selected{% endif %}>По площади (убыв.)</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100">Применить</button>
+    </div>
+</form>
+
 <ul class="list-group">
     {% for p in premises %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            <!-- Ссылка через get_absolute_url -->
             <a href="{{ p.get_absolute_url }}">Помещение №{{ p.number }} ({{ p.premise_type }})</a>
-            {% if p.is_large %}
-                <span class="badge bg-warning text-dark">Большое</span>
-            {% endif %}
+            <div>
+                <span class="badge bg-info text-dark">{{ p.area }} кв.м</span>
+                {% if p.is_large %}<span class="badge bg-warning text-dark">Большое</span>{% endif %}
+            </div>
         </li>
     {% empty %}
-        <li class="list-group-item">Список помещений пуст.</li>
+        <li class="list-group-item">Ничего не найдено.</li>
     {% endfor %}
 </ul>
 {% endblock %}
